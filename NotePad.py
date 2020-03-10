@@ -1,33 +1,37 @@
-from tkinter import *
-from tkinter import ttk
+import tkinter as tk
 from tkinter.filedialog import askopenfile, asksaveasfilename
 
-root = Tk()
+root = tk.Tk()
 root.title("NotePad")
 
 
-def Open():
-    blank.delete("1.0", END)
+def Open(event=None):
+    blank.delete("1.0", tk.END)
     file = askopenfile(mode='r', filetypes=[('text files', '*.txt')])
     if file is not None:
         text = file.read()
         blank.insert("1.0", text)
 
 
-def save():
+def save(event=None):
     notepad = blank.get("1.0", "end-1c")
     file = asksaveasfilename(title="Save", filetypes=[('text files', '*.txt')])
-    with open(file, 'w') as data:
-        data.write(notepad)
+    try:
+        with open(file, 'w') as data:
+            data.write(notepad)
+    except (FileNotFoundError, TypeError) as f:
+        pass
 
 
-menubar = Menu(root)
+menubar = tk.Menu(root)
 root.config(menu=menubar)
-filemenu = Menu(menubar )
+filemenu = tk.Menu(menubar)
 menubar.add_cascade(label="File", menu=filemenu)
 filemenu.add_command(label="Open", command=Open)
-filemenu.add_command(label="Save", command=save )
+filemenu.add_command(label="Save", command=save)
 filemenu.add_command(label="Exit", command=root.quit)
-blank = Text(root, font=("arail", 10))
+blank = tk.Text(root, font=("arail", 10))
 blank.pack()
+root.bind("<Control-o>", Open)
+root.bind("<Control-s>", save)
 root.mainloop()
